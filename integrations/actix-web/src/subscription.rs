@@ -8,7 +8,7 @@ use actix::{
 };
 use actix_http::error::PayloadError;
 use actix_http::{ws, Error};
-use actix_web::web::Bytes;
+use actix_web::web::{Bytes, BytesMut};
 use actix_web::{HttpRequest, HttpResponse};
 use actix_web_actors::ws::{CloseReason, Message, ProtocolError, WebsocketContext};
 use async_graphql::http::{WebSocket, WebSocketProtocols, WsMessage};
@@ -178,7 +178,7 @@ where
             }
             Message::Continuation(item) => match item {
                 ws::Item::FirstText(bytes) | ws::Item::FirstBinary(bytes) => {
-                    self.continuation = bytes.to_vec();
+                    self.continuation = BytesMut::from(&*bytes);
                     None
                 }
                 ws::Item::Continue(bytes) => {
@@ -187,11 +187,11 @@ where
                 }
                 ws::Item::Last(bytes) => {
                     self.continuation.extend_from_slice(&bytes);
-                    Some(std::mem::take(&mut self.continuation))
+                    Some(std::mem::take(&mut self.continuation).freeze())
                 }
             },
             Message::Text(s) => Some(s.into_bytes()),
-            Message::Binary(bytes) => Some(bytes.to_vec()),
+            Message::Binary(bytes) => Some(bytes),
             Message::Close(_) => {
                 ctx.stop();
                 None
