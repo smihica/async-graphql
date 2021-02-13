@@ -24,9 +24,9 @@ pub struct WSSubscription<Query, Mutation, Subscription, F> {
     schema: Schema<Query, Mutation, Subscription>,
     protocol: WebSocketProtocols,
     last_heartbeat: Instant,
-    messages: Option<async_channel::Sender<Vec<u8>>>,
+    messages: Option<async_channel::Sender<Bytes>>,
     initializer: Option<F>,
-    continuation: Vec<u8>,
+    continuation: BytesMut,
 }
 
 impl<Query, Mutation, Subscription>
@@ -94,7 +94,7 @@ where
                 last_heartbeat: Instant::now(),
                 messages: None,
                 initializer: Some(initializer),
-                continuation: Vec::new(),
+                continuation: Default::default(),
             },
             &["graphql-transport-ws", "graphql-ws"],
             request,
