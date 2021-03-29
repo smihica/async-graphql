@@ -16,7 +16,7 @@ async-graphql = { path = "../..", version = "=2.5.2" }
 
 actix = "0.11.0-beta.2"
 actix-http = "3.0.0-beta.3"
-actix-web = { version = "4.0.0-beta.3", default-features = false }
+actix-web = { version = "4.0.0-beta.4", default-features = false }
 actix-web-actors = "4.0.0-beta.2"
 async-channel = "1.5.1"
 futures-util = { version = "0.3.8", default-features = false }
